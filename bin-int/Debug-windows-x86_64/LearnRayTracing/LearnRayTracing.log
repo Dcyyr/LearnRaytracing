@@ -1,0 +1,4 @@
+﻿  main.cpp
+F:\Dev\LearnRayTracing\LearnRayTracing\src\main.cpp(62,28): warning C4018: '<': signed/unsigned mismatch
+F:\Dev\LearnRayTracing\LearnRayTracing\src\main.cpp(64,32): warning C4018: '<': signed/unsigned mismatch
+  LearnRayTracing.vcxproj -> F:\Dev\LearnRayTracing\bin\Debug-windows-x86_64\LearnRayTracing\LearnRayTracing.exe

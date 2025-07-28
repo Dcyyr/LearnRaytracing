@@ -43,14 +43,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\bin\Debug-windows-x86_64\LearnRayTracing\</OutDir>
-    <IntDir>..\bin-intDebug-windows-x86_64\LearnRayTracing\</IntDir>
+    <IntDir>..\bin-int\Debug-windows-x86_64\LearnRayTracing\</IntDir>
     <TargetName>LearnRayTracing</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\bin\Release-windows-x86_64\LearnRayTracing\</OutDir>
-    <IntDir>..\bin-intRelease-windows-x86_64\LearnRayTracing\</IntDir>
+    <IntDir>..\bin-int\Release-windows-x86_64\LearnRayTracing\</IntDir>
     <TargetName>LearnRayTracing</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
@@ -87,6 +87,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\color.h" />
+    <ClInclude Include="src\Ray.h" />
+    <ClInclude Include="src\vec3.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
