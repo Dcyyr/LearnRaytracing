@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cmath>
-#include <iostream>
+#include"rtweekend.h"
+
 
 namespace RT
 {
@@ -38,10 +38,12 @@ namespace RT
             return *this *= 1 / t;
         }
 
+        //返回向量的实际长度（模）,得到实际的向量长度
         double length() const {
             return std::sqrt(length_squared());
         }
 
+        ////返回向量的长度的平方,适合只比较距离大小时用
         double length_squared() const {
             return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
         }
@@ -96,7 +98,8 @@ namespace RT
             u.e[0] * v.e[1] - u.e[1] * v.e[0]);
     }
 
-    inline vec3 unit_vector(const vec3& v) {
+    vec3 unit_vector(const vec3& v) {//作用是把任意向量变成长度为 1 的单位向量，常用于只关心方向、不关心大小的场景。
+
         return v / v.length();
     }
 }

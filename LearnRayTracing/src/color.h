@@ -1,8 +1,7 @@
 #pragma once
 
 //#include <glm/glm.hpp>
-#include "vec3.h"
-#include <iostream>
+#include "rtweekend.h"
 
 void WirteColor(std::ostream& out, const RT::vec3& pixelColor)
 {

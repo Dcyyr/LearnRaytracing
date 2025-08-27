@@ -1,10 +1,12 @@
-#include <iostream>
+#include "rtweekend.h"
 
-#include<glm/glm.hpp>
+#include "hittable.h"
+#include "hittable_list.h"
+#include "sphere.h"
 
-#include "color.h"
-#include "Ray.h"
-#include "vec3.h"
+
+
+
 /**
 像素是按行写入的。
 
@@ -18,29 +20,17 @@
 
 */
 
-bool hit_sphere(const RT::vec3& center, double radius, const Ray& r)
+
+
+RT::vec3 ray_Color(const Ray& r,const Hittable& world)
 {
-    RT::vec3 oc = center - r.Origin(); //(C-Q)
-    auto a = dot(r.Direction(), r.Direction());
-    auto b = -2.0 * dot(r.Direction(), oc);
-    auto c = dot(oc, oc) - radius * radius;
-    auto discriminant = b * b - 4 * a * c;
-    return (discriminant >= 0);
-    /*if (discriminant < 0)
+
+    HitRecord rec;
+    if (world.hit(r,interval(0, Infinity), rec))
     {
-        return -1;
+        return 0.5 * (rec.normal + RT::vec3(1, 1, 1));
     }
-    else
-    {
-        return (b - std::sqrt(discriminant)) / a;
-    }*/
-}
-
-
-RT::vec3 ray_Color(const Ray& r)
-{
-    if (hit_sphere(RT::vec3(0.0, 0.0, -1.0), 0.5, r))
-        return RT::vec3(1.0, 0.0, 0.0);
+        
       
 
     RT::vec3 unit_direction = RT::unit_vector(r.Direction());
@@ -58,6 +48,12 @@ int main() {
 
     int image_height = int(image_width / aspectRatio);
     image_height = (image_height < 1) ? 1 : image_height;
+
+
+	// World
+	HittableList world;
+    world.Add(std::make_shared<Sphere>(RT::vec3(0, 0, -1), 0.5));
+    world.Add(std::make_shared<Sphere>(RT::vec3(0, -100.5, -1),100));
 
     //camera
     auto focal_length= 1.0;//焦距：相机镜头到成像平面的距离值 1.0 表示在虚拟世界单位中决定了视野范围（FOV），焦距越小视野越广
@@ -88,7 +84,7 @@ int main() {
             auto ray_direction = pixel_center - camera_center;
 
             Ray r(camera_center, ray_direction);
-            RT::vec3 pixel_color = ray_Color(r);
+            RT::vec3 pixel_color = ray_Color(r,world);
 
             WirteColor(std::cout, pixel_color);
 
