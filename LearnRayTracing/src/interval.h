@@ -1,6 +1,7 @@
 #pragma once
 #include "rtweekend.h"
 
+//Çø¼äÀà
 class interval {
 public:
     double m_Min, m_Max;
@@ -21,8 +22,8 @@ public:
         return m_Min < x && x < m_Max;
     }
 
-    static const interval empty, universe;
+    static const interval s_Empty, s_Universe;
 };
 
-const interval interval::empty = interval(+Infinity, -Infinity);
-const interval interval::universe = interval(-Infinity, +Infinity);
+const interval interval::s_Empty = interval(+Infinity, -Infinity);
+const interval interval::s_Universe = interval(-Infinity, +Infinity);

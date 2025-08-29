@@ -1283,6 +1283,7 @@
     <ClInclude Include="src\hittable_list.h" />
     <ClInclude Include="src\rtweekend.h" />
     <ClInclude Include="src\interval.h" />
+    <ClInclude Include="src\camera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
