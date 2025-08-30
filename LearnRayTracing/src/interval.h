@@ -2,13 +2,13 @@
 #include "rtweekend.h"
 
 //Çø¼äÀà
-class interval {
+class Interval {
 public:
     double m_Min, m_Max;
 
-    interval() : m_Min(+Infinity), m_Max(-Infinity) {} // Default interval is empty
+    Interval() : m_Min(+Infinity), m_Max(-Infinity) {} // Default interval is empty
 
-    interval(double min, double max) : m_Min(min), m_Max(max) {}
+    Interval(double min, double max) : m_Min(min), m_Max(max) {}
 
     double size() const {
         return m_Max - m_Min;
@@ -22,8 +22,15 @@ public:
         return m_Min < x && x < m_Max;
     }
 
-    static const interval s_Empty, s_Universe;
+    double clamp(double x)const
+    {
+        if (x < m_Min)return m_Min;
+        if (x > m_Max)return m_Max;
+        return x;
+    }
+
+    static const Interval s_Empty, s_Universe;
 };
 
-const interval interval::s_Empty = interval(+Infinity, -Infinity);
-const interval interval::s_Universe = interval(-Infinity, +Infinity);
+const Interval Interval::s_Empty = Interval(+Infinity, -Infinity);
+const Interval Interval::s_Universe = Interval(-Infinity, +Infinity);

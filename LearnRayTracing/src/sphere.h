@@ -10,7 +10,7 @@ public:
 	Sphere(const RT::vec3& center,double radius)
 	:m_Center(center),m_Radius(std::fmax(0,radius)){}
 
-	bool hit(const Ray& r,interval ray_t, HitRecord& rec) const override
+	bool hit(const Ray& r,Interval ray_t, HitRecord& rec) const override
 	{
 		RT::vec3 oc = m_Center - r.Origin(); //(C-Q)
 		auto a = r.Direction().length_squared();

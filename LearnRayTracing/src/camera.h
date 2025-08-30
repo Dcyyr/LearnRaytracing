@@ -28,22 +28,30 @@ public:
             std::clog << "\rScanlines remaining: " << (m_ImageHeight - j) << ' ' << std::flush;
             for (int i = 0; i < m_ImageWidth; i++) 
             {
-                auto pixel_center = m_PixelLocation00 + (i * m_PixelDeltaU) + (j * m_PixelDeltaV);
-                auto ray_direction = pixel_center - m_Center;
-                Ray r(m_Center, ray_direction);
 
-                RT::vec3 pixel_color = RayColor(r, world);
-                WirteColor(std::cout, pixel_color);
+                RT::vec3 pixelColor(0, 0, 0);
+
+                for (int sample = 0; sample < m_SamplesPerPixel; sample++)
+                {
+                    Ray r = GetRay(i, j);
+                    pixelColor += RayColor(r, world);
+                }
+               
+
+               
+                WirteColor(std::cout, m_PixelSamplesScale* pixelColor);
             }
         }
 
         std::clog << "\rDone.                 \n";
     }
-
+private:
 
     void initialize() {
         m_ImageHeight = int(m_ImageWidth / m_AspectRatio);
         m_ImageHeight = (m_ImageHeight < 1) ? 1 : m_ImageHeight;
+
+        m_PixelSamplesScale = 1.0 / m_SamplesPerPixel;
 
         m_Center = RT::vec3(0, 0, 0);
 
@@ -69,7 +77,7 @@ public:
     RT::vec3 RayColor(const Ray& r, const Hittable& world) const {
         HitRecord rec;
 
-        if (world.hit(r, interval(0, Infinity), rec)) {
+        if (world.hit(r, Interval(0, Infinity), rec)) {
             return 0.5 * (rec.normal + RT::vec3(1, 1, 1));
         }
 
@@ -78,14 +86,38 @@ public:
         return (1.0 - a) * RT::vec3(1.0, 1.0, 1.0) + a * RT::vec3(0.5, 0.7, 1.0);
     }
 
+    // // 构造一条从原点出发、指向像素位置 i, j 周围随机采样点的摄像机射线。
+    Ray GetRay(int i, int j)const
+    {
+        auto offset = SampleSquare();
+        auto pixelSample = m_PixelLocation00 + 
+            ((i + offset.x()) * m_PixelDeltaU) + 
+            ((j + offset.y()) * m_PixelDeltaV);
+
+        auto RayOrigin = m_Center;
+		auto Raydirection = pixelSample - RayOrigin;
+
+        return Ray(m_Center, Raydirection);
+    }
+
+    RT::vec3 SampleSquare()const
+    {
+        // 将向量返回至单位正方形[-.5,-.5]-[+.5,+.5]内的随机点。
+        return RT::vec3(RandomDouble() - 0.5, RandomDouble() - 0.5, 0);
+    }
+
+
 public:
-    double   m_AspectRatio = 1.0;  // Ratio of image width over height
-    int      m_ImageWidth = 100;  // Rendered image width in pixel count
+    double   m_AspectRatio = 1.0;  // 图像宽度与高度之比
+    int      m_ImageWidth = 100;  // 渲染图像宽度（以像素计）
+    int      m_SamplesPerPixel = 10; //每个像素的随机采样计数
 private:
     int      m_ImageHeight;   // Rendered image height
     RT::vec3 m_Center;        // Camera center
     RT::vec3 m_PixelLocation00;     // Location of pixel 0, 0
     RT::vec3 m_PixelDeltaU;   // Offset to pixel to the right
     RT::vec3 m_PixelDeltaV;   // Offset to pixel below
+
+    double   m_PixelSamplesScale;// 像素采样值之和的颜色比例因子
 
 };
