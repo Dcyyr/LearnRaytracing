@@ -34,7 +34,7 @@ public:
                 for (int sample = 0; sample < m_SamplesPerPixel; sample++)
                 {
                     Ray r = GetRay(i, j);
-                    pixelColor += RayColor(r, world);
+                    pixelColor += RayColor(r,m_MaxDepth, world);
                 }
                
 
@@ -74,16 +74,22 @@ private:
         m_PixelLocation00 = viewport_upper_left + 0.5 * (m_PixelDeltaU + m_PixelDeltaV);
     }
 
-    RT::vec3 RayColor(const Ray& r, const Hittable& world) const {
-        HitRecord rec;
+    RT::vec3 RayColor(const Ray& r,int maxdepth, const Hittable& world) const 
+    {
 
-        if (world.hit(r, Interval(0, Infinity), rec)) {
-            return 0.5 * (rec.normal + RT::vec3(1, 1, 1));
+        if (maxdepth <= 0)
+            return RT::vec3(0, 0, 0);
+
+        HitRecord rec;
+       
+        if (world.hit(r, Interval(0.001, Infinity), rec)) {
+            RT::vec3 direction = rec.normal + RT::RandomUnitVector();//Lambertian球体,我们可以通过在法向量上添加一个随机单位向量来创建这个分布
+            return 0.5 * RayColor(Ray(rec.p, direction), maxdepth-1, world);//maxdepth-1 表示递归深度减一，防止无限递归
         }
 
-        RT::vec3 unit_direction = RT::unit_vector(r.Direction());
+        RT::vec3 unit_direction = RT::UnitVector(r.Direction());
         auto a = 0.5 * (unit_direction.y() + 1.0);
-        return (1.0 - a) * RT::vec3(1.0, 1.0, 1.0) + a * RT::vec3(0.5, 0.7, 1.0);
+        return (1.0 - a) * RT::vec3(1.0, 1.0, 1.0) + a * RT::vec3(0.5, 0.7, 1.0);//每次递归返回的颜色都乘以 0.5，表示每次弹射（反射/散射）后，光线能量减半，实现能量衰减
     }
 
     // // 构造一条从原点出发、指向像素位置 i, j 周围随机采样点的摄像机射线。
@@ -111,6 +117,7 @@ public:
     double   m_AspectRatio = 1.0;  // 图像宽度与高度之比
     int      m_ImageWidth = 100;  // 渲染图像宽度（以像素计）
     int      m_SamplesPerPixel = 10; //每个像素的随机采样计数
+	int      m_MaxDepth = 10; // 递归光线追踪的最大深度
 private:
     int      m_ImageHeight;   // Rendered image height
     RT::vec3 m_Center;        // Camera center

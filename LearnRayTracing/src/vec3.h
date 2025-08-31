@@ -48,7 +48,15 @@ namespace RT
             return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
         }
 
-       
+        static vec3 Random() 
+        {
+            return vec3(RandomDouble(), RandomDouble(), RandomDouble());
+        }
+
+        static vec3 Random(double min, double max)
+        {
+            return vec3(RandomDouble(min,max), RandomDouble(min,max), RandomDouble(min,max));
+        }
         
     };
 
@@ -98,8 +106,28 @@ namespace RT
             u.e[0] * v.e[1] - u.e[1] * v.e[0]);
     }
 
-    vec3 unit_vector(const vec3& v) {//作用是把任意向量变成长度为 1 的单位向量，常用于只关心方向、不关心大小的场景。
+    inline vec3 UnitVector(const vec3& v) {//作用是把任意向量变成长度为 1 的单位向量，常用于只关心方向、不关心大小的场景。
 
         return v / v.length();
+    }
+
+    inline vec3 RandomUnitVector()
+    {
+        while (1)
+        {
+            auto p = vec3::Random(-1, 1);
+            auto lensq = p.length_squared();
+            if (1e-160 < lensq && lensq <= 1)
+                return p / std::sqrt(lensq);
+        }
+    }
+
+    inline vec3 RandomOnHemisphere(const vec3& normal)
+    {
+        vec3 onUnitSphere = RandomUnitVector();
+        if (dot(onUnitSphere, normal) > 0.0)//与法线位于同一半球
+            return onUnitSphere;
+        else
+            return -onUnitSphere;
     }
 }
