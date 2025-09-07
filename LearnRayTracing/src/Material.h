@@ -53,8 +53,8 @@ class Metal :public Material
 {
 public:
 
-	Metal(const RT::vec3& albedo)
-		:m_Albedo(albedo)
+	Metal(const RT::vec3& albedo,double fuzz)
+		:m_Albedo(albedo),m_Fuzz(fuzz <1 ? fuzz:1)
 	{
 
 	}
@@ -62,12 +62,14 @@ public:
 	bool Scatter(const Ray& rayIn, const HitRecord& rec, RT::vec3& attenuation, Ray& scattered) const override
 	{
 		auto Reflected = RT::Reflect(rayIn.Direction(), rec.normal);
+		Reflected = RT::UnitVector(Reflected) + (m_Fuzz * RT::RandomUnitVector());
 		scattered = Ray(rec.p, Reflected);
 		attenuation = m_Albedo;
-		return true;
+		return(RT::dot(scattered.Direction(), rec.normal) > 0);
 
 	}
 
 private:
 	RT::vec3 m_Albedo;
+	double m_Fuzz;
 };
