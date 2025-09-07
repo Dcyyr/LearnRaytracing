@@ -1,5 +1,2 @@
 ﻿  main.cpp
-F:\Dev\LearnRayTracing\LearnRayTracing\src\sphere.h(34,19): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  (compiling source file 'src/main.cpp')
-  
   LearnRayTracing.vcxproj -> F:\Dev\LearnRayTracing\bin\Debug-windows-x86_64\LearnRayTracing\LearnRayTracing.exe

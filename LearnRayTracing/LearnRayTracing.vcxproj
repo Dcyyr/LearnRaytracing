@@ -92,6 +92,7 @@
     <ClInclude Include="src\hittable.h" />
     <ClInclude Include="src\hittable_list.h" />
     <ClInclude Include="src\interval.h" />
+    <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\Ray.h" />
     <ClInclude Include="src\rtweekend.h" />
     <ClInclude Include="src\sphere.h" />

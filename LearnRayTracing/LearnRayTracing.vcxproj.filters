@@ -1284,6 +1284,7 @@
     <ClInclude Include="src\rtweekend.h" />
     <ClInclude Include="src\interval.h" />
     <ClInclude Include="src\camera.h" />
+    <ClInclude Include="src\Material.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

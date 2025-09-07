@@ -2,6 +2,8 @@
 
 #include"rtweekend.h"
 
+class Material;
+
 class HitRecord
 {
 public:
@@ -9,6 +11,8 @@ public:
 	RT::vec3 normal;//法线
 	double t;
 	bool front_face;//射线是否击中物体的正面
+	std::shared_ptr<Material> m_Mat;
+
 
 	void SetFaceNormal(const Ray& r, const RT::vec3& outway_normal)
 	{

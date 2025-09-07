@@ -12,7 +12,7 @@ public:
 	const RT::vec3& Origin() const{ return m_Origin; }
 	const RT::vec3& Direction() const{ return m_Dir; }
 
-	RT::vec3 at(float t)const
+	RT::vec3 at(double t)const
 	{
 		return m_Origin + t * m_Dir;
 	}

@@ -48,6 +48,12 @@ namespace RT
             return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
         }
 
+        bool NearZero()const
+        {
+            auto s = 1e-8;
+            return (std::fabs(e[0]) < s) && (std::fabs(e[1]) < s) && (std::fabs(e[2]) < s);
+        }
+
         static vec3 Random() 
         {
             return vec3(RandomDouble(), RandomDouble(), RandomDouble());
@@ -113,7 +119,7 @@ namespace RT
 
     inline vec3 RandomUnitVector()
     {
-        while (1)
+        while (true)
         {
             auto p = vec3::Random(-1, 1);
             auto lensq = p.length_squared();
@@ -129,5 +135,11 @@ namespace RT
             return onUnitSphere;
         else
             return -onUnitSphere;
+    }
+
+    inline vec3 Reflect(const vec3& v, const vec3& n)//计算入射向量 v 关于法线 n 的反射向量
+    {
+        return v - 2 * dot(v, n) * n;//dot(v, n) * n 得到 v 在法线方向上的投影。v - 2 * (投影)就是把 v 关于法线“翻折”到另一侧，得到反射方向。
+   
     }
 }

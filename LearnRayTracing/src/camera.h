@@ -1,7 +1,8 @@
 #pragma once
 
-#include "hittable.h"
 
+#include "hittable.h"
+#include "Material.h"
 /**
 像素是按行写入的。
 
@@ -83,8 +84,12 @@ private:
         HitRecord rec;
        
         if (world.hit(r, Interval(0.001, Infinity), rec)) {
-            RT::vec3 direction = rec.normal + RT::RandomUnitVector();//Lambertian球体,我们可以通过在法向量上添加一个随机单位向量来创建这个分布
-            return 0.5 * RayColor(Ray(rec.p, direction), maxdepth-1, world);//maxdepth-1 表示递归深度减一，防止无限递归
+            Ray scattered;
+            RT::vec3 attenuation;
+            if (rec.m_Mat->Scatter(r, rec, attenuation, scattered))
+                return attenuation * RayColor(scattered, maxdepth - 1, world);
+            return RT::vec3(0, 0, 0);
+
         }
 
         RT::vec3 unit_direction = RT::UnitVector(r.Direction());
