@@ -142,4 +142,13 @@ namespace RT
         return v - 2 * dot(v, n) * n;//dot(v, n) * n 得到 v 在法线方向上的投影。v - 2 * (投影)就是把 v 关于法线“翻折”到另一侧，得到反射方向。
    
     }
+
+    //?	uv：入射单位向量（光线方向，已归一化）n：表面法线单位向量 etai_over_etat折射率比（入射介质的折射率 / 出射介质的折射率）
+    inline vec3 Refract(const vec3& uv, const vec3& n, double etai_over_etat)
+    {
+        auto cosTheta = std::fmin(dot(-uv, n), 1.0);//计算入射光线与法线的夹角的余弦值，限制最大为1
+        vec3 r_out_perp = etai_over_etat * (uv + cosTheta * n);//计算折射光线在法线垂直方向上的分量
+        vec3 r_out_parallel = -std::sqrt(std::fabs(1.0 - r_out_perp.length_squared())) * n;//计算折射光线在法线方向上的分量，保证总长度为1（单位向量）
+        return r_out_perp + r_out_parallel;
+    }
 }

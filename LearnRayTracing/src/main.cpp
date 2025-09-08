@@ -15,7 +15,8 @@ int main() {
 
 	auto materialGround = std::make_shared<Lambertian>(RT::vec3(0.8, 0.8, 0.0));
 	auto materialCenter = std::make_shared<Lambertian>(RT::vec3(0.1, 0.2, 0.5));
-	auto materialLeft   = std::make_shared<Metal>(RT::vec3(0.8, 0.8, 0.8),0.3);
+	auto materialbubble = std::make_shared<Dielectric>(1.00 / 1.50);
+	auto materialLeft   = std::make_shared<Dielectric>(1.50);
 	auto materialRight  = std::make_shared<Metal>(RT::vec3(0.8, 0.6, 0.2),1.0);
 
 
@@ -23,6 +24,7 @@ int main() {
     world.Add(std::make_shared<Sphere>(RT::vec3(0, -100.5, -1),100, materialGround));
 	world.Add(std::make_shared<Sphere>(RT::vec3(0, 0, -1.2), 0.5, materialCenter));
 	world.Add(std::make_shared<Sphere>(RT::vec3(-1.0, 0.0, -1.0), 0.5, materialLeft));
+	world.Add(std::make_shared<Sphere>(RT::vec3(-1.0, 0.0, -1.0), 0.4, materialbubble));
 	world.Add(std::make_shared<Sphere>(RT::vec3(1.0, 0.0, -1.0), 0.5, materialRight));
 
 	Camera m_Cam;

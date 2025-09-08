@@ -73,3 +73,59 @@ private:
 	RT::vec3 m_Albedo;
 	double m_Fuzz;
 };
+
+class Dielectric : public Material
+{
+public:
+	Dielectric(double refractionindex)
+		:m_RefractionIndex(refractionindex)
+	{
+
+	}
+
+
+	bool Scatter(const Ray& rayIn, const HitRecord& rec, RT::vec3& attenuation, Ray& scattered)const override
+	{
+		attenuation = RT::vec3(1.0, 1.0, 1.0);
+
+		//根据光线是进入还是离开介质，选择合适的折射率
+		double ri = rec.front_face ? (1.0 / m_RefractionIndex) : m_RefractionIndex;
+
+
+		RT::vec3 unitDirection = RT::UnitVector(rayIn.Direction());
+
+		//当光线以足够斜的角度进入折射率较低的介质时，它可能会以大于 90°的角度发生折射,等式两边的相等关系被破坏，且不存在解。如果不存在解，玻璃无法折射，因此必须反射光线：
+
+
+		double cos_thete = std::fmin(dot(-unitDirection, rec.normal), 1.0);
+		double sin_theta = std::sqrt(1.0 - cos_thete * cos_thete);
+
+		bool cannotRefract = ri * sin_theta > 1.0;
+		RT::vec3 direction;
+
+		//如果不能折射（全反射），则反射光线；否则，根据斯涅尔定律计算折射光线
+		if (cannotRefract || Reflectance(cos_thete,ri) > RandomDouble())
+			direction = RT::Reflect(unitDirection, rec.normal);
+		else
+			direction = RT::Refract(unitDirection, rec.normal, ri);
+
+
+		scattered = Ray(rec.p, direction);
+		return true;
+
+	}
+
+
+
+private:
+	//真空或空气中的折射率，或材料折射率与所处介质折射率之比
+	double m_RefractionIndex;
+
+	static double Reflectance(double cos, double refractionIndex)
+	{
+		//使用 Schlick 近似计算反射率
+		auto r0 = (1 - refractionIndex) / (1 + refractionIndex);
+		r0 = r0 * r0;
+		return r0 + (1 - r0) * std::pow((1 - cos), 5);
+	}
+};
