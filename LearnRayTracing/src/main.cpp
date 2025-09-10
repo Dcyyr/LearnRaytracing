@@ -33,6 +33,11 @@ int main() {
 	m_Cam.m_SamplesPerPixel = 100;
 	m_Cam.m_MaxDepth = 50;
 
+	m_Cam.m_Vfov = 20.0;
+	m_Cam.m_LookFrom = RT::vec3(-2, 2, 1);
+	m_Cam.m_LookAt	 = RT::vec3(0, 0, -1);
+	m_Cam.m_ViewUp	 = RT::vec3(0, 1, 0);
+
 
 	m_Cam.render(world);
    

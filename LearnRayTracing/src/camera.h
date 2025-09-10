@@ -54,16 +54,26 @@ private:
 
         m_PixelSamplesScale = 1.0 / m_SamplesPerPixel;
 
-        m_Center = RT::vec3(0, 0, 0);
+        m_Center = m_LookFrom;
 
+        
         // Determine viewport dimensions.
-        auto focal_length = 1.0;
-        auto viewport_height = 2.0;
+        auto focal_length = (m_LookFrom - m_LookAt).length();//焦距
+        auto theta = DegreesToRadians(m_Vfov);
+        auto h = std::tan(theta / 2);
+		auto viewport_height = 2 * h * focal_length;
+        
         auto viewport_width = viewport_height * (double(m_ImageWidth) / m_ImageHeight);
 
+        w = RT::UnitVector(m_LookFrom - m_LookAt);
+        u = RT::UnitVector(RT::cross(m_ViewUp, w));
+        v = RT::cross(w, u);
+
+
+
         // Calculate the vectors across the horizontal and down the vertical viewport edges.
-        auto viewport_u = RT::vec3(viewport_width, 0, 0);
-        auto viewport_v = RT::vec3(0, -viewport_height, 0);
+        RT::vec3 viewport_u = viewport_width * u;
+        RT::vec3 viewport_v = viewport_height * -v;
 
         // Calculate the horizontal and vertical delta vectors from pixel to pixel.
         m_PixelDeltaU = viewport_u / m_ImageWidth;
@@ -71,7 +81,7 @@ private:
 
         // Calculate the location of the upper left pixel.
         auto viewport_upper_left =
-            m_Center - RT::vec3(0, 0, focal_length) - viewport_u / 2 - viewport_v / 2;
+            m_Center - (focal_length * w) - viewport_u / 2 - viewport_v / 2;
         m_PixelLocation00 = viewport_upper_left + 0.5 * (m_PixelDeltaU + m_PixelDeltaV);
     }
 
@@ -123,12 +133,21 @@ public:
     int      m_ImageWidth = 100;  // 渲染图像宽度（以像素计）
     int      m_SamplesPerPixel = 10; //每个像素的随机采样计数
 	int      m_MaxDepth = 10; // 递归光线追踪的最大深度
+
+    double m_Vfov = 90.0;//垂直视角
+    RT::vec3 m_LookFrom = RT::vec3(0, 0, 0);//摄像机观察的点，就是相机自己的位置
+    RT::vec3 m_LookAt = RT::vec3(0, 0, 1);//相机看向的点
+    RT::vec3 m_ViewUp = RT::vec3(0, 1, 0);//相对于相机向上的位置
+
+
 private:
     int      m_ImageHeight;   // Rendered image height
     RT::vec3 m_Center;        // Camera center
     RT::vec3 m_PixelLocation00;     // Location of pixel 0, 0
     RT::vec3 m_PixelDeltaU;   // Offset to pixel to the right
     RT::vec3 m_PixelDeltaV;   // Offset to pixel below
+    RT::vec3 u, v, w;
+
 
     double   m_PixelSamplesScale;// 像素采样值之和的颜色比例因子
 
