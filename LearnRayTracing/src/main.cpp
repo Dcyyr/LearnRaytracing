@@ -29,15 +29,17 @@ int main() {
 
 	Camera m_Cam;
 	m_Cam.m_AspectRatio = 16.0/9.0;
-	m_Cam.m_ImageWidth = 400;
+	m_Cam.m_ImageWidth = 500;
 	m_Cam.m_SamplesPerPixel = 100;
 	m_Cam.m_MaxDepth = 50;
 
 	m_Cam.m_Vfov = 20.0;
-	m_Cam.m_LookFrom = RT::vec3(-2, 2, 1);
+	m_Cam.m_LookFrom = RT::vec3(-2,2,1);
 	m_Cam.m_LookAt	 = RT::vec3(0, 0, -1);
 	m_Cam.m_ViewUp	 = RT::vec3(0, 1, 0);
 
+	m_Cam.m_DefocusAngle = 5.0;
+	m_Cam.m_FocusDist    = 3.4;
 
 	m_Cam.render(world);
    

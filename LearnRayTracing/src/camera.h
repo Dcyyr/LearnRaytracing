@@ -58,10 +58,10 @@ private:
 
         
         // Determine viewport dimensions.
-        auto focal_length = (m_LookFrom - m_LookAt).length();//焦距
+        //auto focal_length = (m_LookFrom - m_LookAt).length();//焦距
         auto theta = DegreesToRadians(m_Vfov);
         auto h = std::tan(theta / 2);
-		auto viewport_height = 2 * h * focal_length;
+		auto viewport_height = 2 * h * m_FocusDist;
         
         auto viewport_width = viewport_height * (double(m_ImageWidth) / m_ImageHeight);
 
@@ -81,8 +81,14 @@ private:
 
         // Calculate the location of the upper left pixel.
         auto viewport_upper_left =
-            m_Center - (focal_length * w) - viewport_u / 2 - viewport_v / 2;
+            m_Center - (m_FocusDist * w) - viewport_u / 2 - viewport_v / 2;
         m_PixelLocation00 = viewport_upper_left + 0.5 * (m_PixelDeltaU + m_PixelDeltaV);
+
+
+        auto defocusRadius = m_FocusDist * std::tan(DegreesToRadians(m_DefocusAngle / 2));
+        m_DefocusDiskU = u * defocusRadius;
+        m_DefocusDiskV = v * defocusRadius;
+
     }
 
     RT::vec3 RayColor(const Ray& r,int maxdepth, const Hittable& world) const 
@@ -115,7 +121,7 @@ private:
             ((i + offset.x()) * m_PixelDeltaU) + 
             ((j + offset.y()) * m_PixelDeltaV);
 
-        auto RayOrigin = m_Center;
+        auto RayOrigin = (m_DefocusAngle <= 0)?m_Center: DefocusDiskSample();
 		auto Raydirection = pixelSample - RayOrigin;
 
         return Ray(m_Center, Raydirection);
@@ -125,6 +131,12 @@ private:
     {
         // 将向量返回至单位正方形[-.5,-.5]-[+.5,+.5]内的随机点。
         return RT::vec3(RandomDouble() - 0.5, RandomDouble() - 0.5, 0);
+    }
+
+    RT::vec3 DefocusDiskSample()const
+    {
+        auto p = RT::RandomInUnitDisk();
+        return m_Center + (p[0] * m_DefocusDiskU) + (p[1] * m_DefocusDiskV);
     }
 
 
@@ -139,6 +151,8 @@ public:
     RT::vec3 m_LookAt = RT::vec3(0, 0, 1);//相机看向的点
     RT::vec3 m_ViewUp = RT::vec3(0, 1, 0);//相对于相机向上的位置
 
+    double m_DefocusAngle = 0;//每个像素中光线的变化角度,散焦模糊（景深）
+    double m_FocusDist = 10;//从相机观察点到完美聚焦平面的距离
 
 private:
     int      m_ImageHeight;   // Rendered image height
@@ -147,7 +161,8 @@ private:
     RT::vec3 m_PixelDeltaU;   // Offset to pixel to the right
     RT::vec3 m_PixelDeltaV;   // Offset to pixel below
     RT::vec3 u, v, w;
-
+    RT::vec3 m_DefocusDiskU;//失焦盘水平半径
+    RT::vec3 m_DefocusDiskV;//失焦盘垂直半径
 
     double   m_PixelSamplesScale;// 像素采样值之和的颜色比例因子
 

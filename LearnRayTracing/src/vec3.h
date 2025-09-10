@@ -117,6 +117,16 @@ namespace RT
         return v / v.length();
     }
 
+    inline vec3 RandomInUnitDisk()
+    {
+        while (true)
+        {
+            auto p = vec3(RandomDouble(-1, 1), RandomDouble(-1, 1), 0);
+            if (p.length_squared() < 1)
+                return p;
+        }
+    }
+
     inline vec3 RandomUnitVector()
     {
         while (true)
